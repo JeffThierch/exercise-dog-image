@@ -1,30 +1,64 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={ logo } className="App-logo" alt="logo" />
-        <p>
-          Edit
-          <code>
-            src/App.js
-          </code>
-          and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+export default class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      dogImage: '',
+    };
 
-export default App;
+    this.fetchAPI = this.fetchAPI.bind(this);
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  componentDidMount() {
+    this.fetchAPI();
+  }
+
+  shouldComponentUpdate(_nextProps, nextState) {
+    if (nextState.dogImage.includes('terrier')) {
+      console.log('oi');
+      return false;
+    }
+    return true;
+  }
+
+  handleClick() {
+    this.componentDidMount();
+  }
+
+  async fetchAPI() {
+    const fetchData = await fetch('https://dog.ceo/api/breeds/image/random');
+    const data = await fetchData.json();
+    this.setState({
+      dogImage: data.message,
+    });
+  }
+
+  render() {
+    const { dogImage } = this.state;
+    const dogImageRender = (
+      <>
+        <section className="dog-image-container">
+          <img
+            src={ dogImage }
+            alt="dog"
+            className="dog-image"
+          />
+        </section>
+        <button type="button" onClick={ this.handleClick }>Trocar Imagem</button>
+      </>
+    );
+
+    if (dogImage === '') {
+      return 'loading...';
+    }
+
+    return (
+      <main>
+        {dogImageRender}
+      </main>
+    );
+  }
+}
